@@ -2,7 +2,7 @@
 
 This Python script utilizes the `discord` library to create a Discord bot capable of managing roles based on reactions to specific messages. The bot allows users to subscribe and unsubscribe from notifications using reactions.
 
-![Discord](Images\discord.png)
+![img](Images/discord.png)
 ## Installation   
 
 1. Clone the repository:
