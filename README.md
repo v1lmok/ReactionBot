@@ -40,8 +40,7 @@ Before running the bot, you need to configure the `Consts` class in the source-c
 Run the bot using the following command:
 
 ```bash
-python reaction.py
-python redirect.py
+python bot.py
 ```
 
 Once the bot is running, users can react to specific messages in the `ADD_CHANNEL_ID` and `REMOVE_CHANNEL_ID` channels to subscribe or unsubscribe from notifications.
