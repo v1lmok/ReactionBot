@@ -13,19 +13,27 @@ class Consts:
         self.LOGS_CHANNEL_ID = 1241752215559999609
         self.ROLE_ID = 686277128811053127
         self.REACTION_ADD = '✅'
-        self.REACTION_REMOVE = '🤡'
+        self.REACTION_REMOVE = '🤡' 
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='$ ', intents=intents)
 consts = Consts()
 
+
 # Comment if no need
 @bot.command(name='give')
 async def giving(ctx, user_id: int, role_id: int):
-    l33t = [677516184064753664]
+
+    l33t = [6775161840647536641]
+    l33t_roles = [1241457910857601096]
+
+    author_id = ctx.author.id
+    author_roles = ctx.author.roles
+    author_role_ids = [role.id for role in author_roles if role.name != "@everyone"]
+
     user = ctx.guild.get_member(user_id)
     role = discord.utils.get(ctx.guild.roles, id=role_id)
-
+    
     async def cleaning():
         await asyncio.sleep(1)
         await ctx.message.delete()
@@ -33,7 +41,17 @@ async def giving(ctx, user_id: int, role_id: int):
         if 'forbidden' in locals():
             await forbidden.delete()
 
-    if user_id in l33t:
+    if user is None:
+        message = await ctx.send('The specified user does not exist.')
+        await cleaning()
+        return
+    
+    if role is None:
+        message = await ctx.send('The specified role does not exist.')
+        await cleaning()
+        return
+
+    if author_id in l33t or any(role_id in l33t_roles for role_id in author_role_ids):
         try:
             await user.add_roles(role)
             message = await ctx.send(f'The role {role.name} has been successfully assigned to user {user.name} ({user.id}).\nCleaning...')
@@ -52,6 +70,7 @@ async def giving(ctx, user_id: int, role_id: int):
         except discord.Forbidden:
             forbidden = await ctx.send(f'Insufficient permissions for timeout.\nCleaning')
             await cleaning()
+            return
 
 
 @bot.event
@@ -83,6 +102,7 @@ async def on_ready():
             print(f'{Fore.RED}Role with ID {consts.ROLE_ID} not found{Style.RESET_ALL}')
             await logs.send(f'[❌] Role with ID {consts.ROLE_ID} not found.')
 
+
 @bot.event
 async def on_raw_reaction_add(payload):
     guild = bot.get_guild(payload.guild_id)
@@ -109,5 +129,6 @@ async def on_raw_reaction_add(payload):
             await member.remove_roles(role)
             print(f'{Fore.RED}Removed role {role.name} from {member.name} {Style.RESET_ALL}({member.id})')
             await logs.send(f'[✅] Removed role {role.name} from {member.name} ({member.id})\n[🤡] {member.name} ({member.id}) unsubscribed from the newsletter.')
+
 
 bot.run(consts.TOKEN)

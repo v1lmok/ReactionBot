@@ -47,6 +47,8 @@ async def helps(ctx, *, arg: str = None):
             await ctx.send(f'channel_id: int, message: str, anon: bool\nExample: $ send 1241453802541023343 "Привет, мир!" True')
         elif arg == 'react':
             await ctx.send(f'Put reaction to get role or remove reaction to remove role')
+        else:
+            await ctx.send(f'$ helps redir\n$ helps react')
     else:
         await ctx.send(f'$ helps redir\n$ helps react')
 
