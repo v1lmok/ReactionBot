@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from colorama import Fore, Style
-import asyncio
+import asyncio, aiohttp, json, random
 from datetime import timedelta
 
 class Consts:
@@ -19,6 +19,26 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='$ ', intents=intents)
 consts = Consts()
 
+async def get_random_quote(pastebin_url):
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(pastebin_url) as response:
+                response.raise_for_status()
+
+                text_data = await response.text()
+                data = json.loads(text_data)
+
+                quotes = data.get("quotes", [])
+                if not quotes:
+                    return 'No "quotes" in this JSON!'
+
+                random_quote = random.choice(quotes)
+                return random_quote
+            
+        except aiohttp.ClientError as e:
+            return f"An error occurred while fetching the JSON data: {e}"
+        except json.JSONDecodeError:
+            return "Error decoding the JSON data."
 
 # Comment if no need
 @bot.command(name='give')
@@ -75,12 +95,15 @@ async def giving(ctx, user_id: int, role_id: int):
 
 @bot.event
 async def on_ready():
+    pastebin_url = "https://pastebin.com/raw/TzG8AUYj"
+    quote = await get_random_quote(pastebin_url)
     logs = bot.get_channel(consts.LOGS_CHANNEL_ID)
     add_channel = bot.get_channel(consts.ADD_CHANNEL_ID)
     remove_channel = bot.get_channel(consts.REMOVE_CHANNEL_ID)
     role = add_channel.guild.get_role(consts.ROLE_ID)
     print(f'{Fore.CYAN}Bot has logged in as {Style.RESET_ALL}{bot.user}')
     await logs.send(f'[♿] Bot has logged in as {bot.user}.')
+    await logs.send(f'[♾️] {quote}')
     await logs.send(f'[❗] Consts:\nAdd role channel id: {consts.ADD_CHANNEL_ID}\nRemove role channel id: {consts.REMOVE_CHANNEL_ID}'
                     f'\nLogs channel id: {consts.LOGS_CHANNEL_ID}\nRole id: {consts.ROLE_ID}\nReaction add: {consts.REACTION_ADD}\nReaction remove: {consts.REACTION_REMOVE}')
     if add_channel and remove_channel and role:
